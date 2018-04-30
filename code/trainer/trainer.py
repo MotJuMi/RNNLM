@@ -11,8 +11,9 @@ class Trainer(BaseTrainer):
         self.batch_size = data_loader.batch_size
         self.data_loader = data_loader
         self.valid_data_loader = valid_data_loader
-        self.valid = True if self.valid_data_loader is not None else false
+        self.valid = True if self.valid_data_loader is not None else False
         self.log_step = int(np.sqrt(self.batch_size))
+        self.ntoken = self.config['model']['ntoken']
 
     def _to_variable(self, data, target):
         data, target = torch.LongTensor(data), torch.LongTensor(target)
@@ -44,17 +45,23 @@ class Trainer(BaseTrainer):
         total_metrics = np.zeros(len(self.metrics))
         hidden = self.model.init_hidden(self.batch_size)
         for batch_idx, (data, target) in enumerate(self.data_loader):
+            #print('data.len(): ' + str(len(data)))
+            #print('target.len(): ' + str(len(target)))
             data, target = self._to_variable(data, target)
-
+            #print('data.size(): ' + str(data.size()))
+            #print('target.size(): ' + str(target.size()))
             hidden = self._repackage_hidden(hidden)
             self.optimizer.zero_grad()
-            output, hidden = self.model(data)
-            loss = self.loss(output.view(-1, ntokens), target)
+            output, hidden = self.model(data, hidden)
+            #print('output.size(): ' + str(output.size()))
+            #print('target.size(): ' + str(target.size()))
+            loss = self.loss(output.view(-1, self.ntoken), target.t().contiguous().view(-1))
             loss.backward()
+            torch.nn.utils.clip_grad_norm(self.model.parameters(), 0.25)
             self.optimizer.step()
 
             total_loss += loss.data[0]
-            total_metrics += self._eval_metrics(output, target)
+            #total_metrics += self._eval_metrics(output, target)
 
             if self.verbosity >= 2 and batch_idx % self.log_step == 0:
                 self.logger.info('Train Epoch: {} [{}/{} ({:.0f}%)] Loss: '
