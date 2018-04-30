@@ -15,12 +15,14 @@ logging.basicConfig(level=logging.INFO, format='')
 def main(config, resume):
     train_logger = Logger()
 
-    train_dataset, data_loader = get_loader(config, mode='train', vocab=None)
+    train_dataset, data_loader = get_loader(config, mode='train', vocab=None,
+                                            seq_len=config['data_loader']['seq_len'],
+                                            batch_size=config['data_loader']['batch_size'])
     train_vocab = train_dataset.get_vocab()
     valid_data_loader = get_loader(config, mode='valid', vocab=train_vocab)
-    config_model = config['model']
-    config_model['ntoken'] = len(train_vocab)
-    model = eval(config['arch'])(config_model)
+    config['model']['ntoken'] = len(train_vocab)
+    print(config)
+    model = eval(config['arch'])(config['model'])
     model.summary()
 
     loss = eval(config['loss'])
