@@ -21,20 +21,20 @@ class BaseTrainer:
         if config['cuda'] and not torch.cuda.is_available():
             self.logger.warning('Warning: There\'s no CUDA support on this machine, '
                                 'training is performed on CPU.')
-            self.train_logger = train_logger
-            self.optimizer = getattr(optim, config['optimizer_type'])(model.parameters(),
-                                                                      **config['optimizer'])
-            self.monitor = config['trainer']['monitor']
-            self.monitor_mode = config['trainer']['monitor_mode']
-            assert self.monitor_mode == 'min' or self.monitor_mode == 'max'
-            self.monitor_best = math.inf if self.monitor_mode == 'min' else -math.inf
-            self.start_epoch = 1
-            self.checkpoint_dir = os.path.join(config['trainer']['save_dir'], self.name)
-            ensure_dir(self.checkpoint_dir)
-            json.dump(config, open(os.path.join(self.checkpoint_dir, 'config.json'), 'w'),
-                      indent=4, sort_keys=False)
-            if resume:
-                self._resume_checkpoint(resume)
+        self.train_logger = train_logger
+        self.optimizer = getattr(optim, config['optimizer_type'])(model.parameters(),
+                                                                  **config['optimizer'])
+        self.monitor = config['trainer']['monitor']
+        self.monitor_mode = config['trainer']['monitor_mode']
+        assert self.monitor_mode == 'min' or self.monitor_mode == 'max'
+        self.monitor_best = math.inf if self.monitor_mode == 'min' else -math.inf
+        self.start_epoch = 1
+        self.checkpoint_dir = os.path.join(config['trainer']['save_dir'], self.name)
+        ensure_dir(self.checkpoint_dir)
+        json.dump(config, open(os.path.join(self.checkpoint_dir, 'config.json'), 'w'),
+                  indent=4, sort_keys=False)
+        if resume:
+            self._resume_checkpoint(resume)
 
     def train(self):
         for epoch in range(self.start_epoch, self.epoch+1):
