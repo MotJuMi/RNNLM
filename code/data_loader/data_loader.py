@@ -39,7 +39,7 @@ class Dataset(data.Dataset):
             ids = []
             for line in f:
                 ids.extend([self.vocab.add_word(x) for x in
-                       line.strip().split(" ") + self.vocab.EOS])
+                       line.strip().split(" ") + [self.vocab.EOS]])
 
         return ids
 
@@ -86,7 +86,7 @@ def collate_fn(data):
 
     return src_seqs, src_lengths, tgt_seqs, tgt_lengths
 
-def get_loader(config, mode='train', vocab=None, shuffle=False, seq_len=20, batch_size=100)
+def get_loader(config, mode='train', vocab=None, shuffle=False, seq_len=20, batch_size=100):
     path = config['data_loader']['data_dir'] + '/' + mode + '.txt'
     dataset = Dataset(path, vocab, seq_len)
     data_loader = torch.utils.data.DataLoader(dataset=dataset,
