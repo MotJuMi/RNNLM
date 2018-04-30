@@ -37,7 +37,7 @@ class BaseTrainer:
             self._resume_checkpoint(resume)
 
     def train(self):
-        for epoch in range(self.start_epoch, self.epoch+1):
+        for epoch in range(self.start_epoch, self.epochs+1):
             result = self._train_epoch(epoch)
             log = {'epoch': epoch}
             for key, value in result.items():
