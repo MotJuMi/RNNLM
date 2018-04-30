@@ -6,7 +6,7 @@ import torch
 from model.model import *
 from model.loss import *
 from model.metric import *
-from data_loader import WikiTextDataLoader
+from data_loader import get_loader
 from trainer import Trainer
 from logger import Logger
 
@@ -15,10 +15,12 @@ logging.basicConfig(level=logging.INFO, format='')
 def main(config, resume):
     train_logger = Logger()
 
-    data_loader = WikiTextDataLoader(config)
-    valid_data_loader = data_loader.split_validation()
-
-    model = eval(config['arch'])(config['model'])
+    train_dataset, data_loader = get_loader(config, mode='train', vocab=None)
+    train_vocab = train_dataset.get_vocab()
+    valid_data_loader = get_loader(config, mode='valid', vocab=train_vocab)
+    config_model = config['model']
+    config_model['ntoken'] = len(train_vocab)
+    model = eval(config['arch'])(config_model)
     model.summary()
 
     loss = eval(config['loss'])
