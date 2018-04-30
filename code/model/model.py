@@ -2,8 +2,8 @@ from base import BaseModel
 import torch.nn as nn
 
 class RNNLM(BaseModel):
-    def __init__(self, config, rnn_type, ntoken,
-                 ninput, nhidden, nlayers, dropout=0.5,
+    def __init__(self, config, rnn_type='LSTM', ntoken=50000,
+                 ninput=300, nhidden=128, nlayers=2, dropout=0.5,
                  tie_weights=False):
         super(RNNLM, self).__init__(config)
         self.config = config
@@ -33,7 +33,7 @@ class RNNLM(BaseModel):
 
     def init_weights(self):
         initrange = 0.1
-        self.encoder.weight.data_uniform_(-initrange, initrange)
+        self.encoder.weight.data.uniform_(-initrange, initrange)
         self.decoder.bias.data.zero_()
         self.decoder.weight.data.uniform_(-initrange, initrange)
 
