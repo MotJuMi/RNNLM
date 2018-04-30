@@ -27,6 +27,11 @@
     },
     "arch": "RNNLM",
     "model": {
-
+        "rnn_type": "LSTM",
+        "ninput": 300,
+        "nhidden": 128,
+        "nlayers": 2,
+        "dropout": 0.5,
+        "tie_weights": false
     }
 }
