@@ -12,7 +12,7 @@ class BaseModel(nn.Module):
         raise NotImplementedError
 
     def summary(self):
-        model_parameters = filter(lambda p: p.requires._grad,
+        model_parameters = filter(lambda p: p.requires_grad,
                                   self.parameters())
         params = sum([np.prod(p.size()) for p in model_parameters])
         self.logger.info('Trainable parameters: {}'.format(params))
