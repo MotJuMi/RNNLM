@@ -84,9 +84,10 @@ def collate_fn(data):
     src_seqs, src_lengths = merge(src_seqs)
     tgt_seqs, tgt_lengths = merge(tgt_seqs)
 
-    return src_seqs, src_lengths, tgt_seqs, tgt_lengths
+    #return src_seqs, src_lengths, tgt_seqs, tgt_lengths
+    return src_seqs, tgt_seqs
 
-def get_loader(config, mode='train', vocab=None, shuffle=False, seq_len=20, batch_size=100):
+def get_loader(config, mode='train', vocab=None, shuffle=False, seq_len=20, batch_size=32):
     path = config['data_loader']['data_dir'] + '/' + mode + '.txt'
     dataset = Dataset(path, vocab, seq_len)
     data_loader = torch.utils.data.DataLoader(dataset=dataset,
