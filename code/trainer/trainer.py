@@ -28,6 +28,13 @@ class Trainer(BaseTrainer):
             ppl_metrics[i] += metric(output, target)
         return ppl_metrics
 
+    def _repackage_hidden(self, h):
+        """Wraps hidden states in new Tensors, to detach them from their history."""
+        if isinstance(h, torch.Tensor):
+            return h.detach()
+        else:
+            return tuple(self._repackage_hidden(v) for v in h)
+
     def _train_epoch(self, epoch):
         self.model.train()
         if self.with_cuda:
@@ -35,12 +42,14 @@ class Trainer(BaseTrainer):
 
         total_loss = 0
         total_metrics = np.zeros(len(self.metrics))
+        hidden = self.model.init_hidden(self.batch_size)
         for batch_idx, (data, target) in enumerate(self.data_loader):
             data, target = self._to_variable(data, target)
 
+            hidden = self._repackage_hidden(hidden)
             self.optimizer.zero_grad()
-            output = self.model(data)
-            loss = self.loss(output, target)
+            output, hidden = self.model(data)
+            loss = self.loss(output.view(-1, ntokens), target)
             loss.backward()
             self.optimizer.step()
 
