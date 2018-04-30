@@ -3,7 +3,8 @@
     "cuda": true,
     "data_loader": {
         "data_dir": "../data/",
-        "batch_size": 32,
+        "batch_size": 128,
+        "seq_len": 35,
         "shuffle": false
     },
     "validation": {
@@ -18,7 +19,7 @@
     "loss": "my_loss",
     "metrics": ["my_metric"],
     "trainer": {
-        "epochs": 1000,
+        "epochs": 1,
         "save_dir": "saved/",
         "save_freq": 1,
         "verbosity": 2,
