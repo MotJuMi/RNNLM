@@ -93,35 +93,3 @@ class BaseTrainer:
         self.train_logger = checkpoint['logger']
         self.config = checkpoint['config']
         self.logger.info('Checkpoint \'{}\' (epoch {}) loaded'.format(resume_path, self.start_epoch))
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
