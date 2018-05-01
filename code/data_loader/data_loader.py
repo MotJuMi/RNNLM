@@ -105,27 +105,3 @@ def get_loader(config, mode='train', vocab=None, shuffle=False, seq_len=20, batc
                                               collate_fn=collate_fn)
 
     return dataset, data_loader
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
