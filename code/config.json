@@ -16,6 +16,7 @@
         "lr": 0.001,
         "weight_decay": 0
     },
+    "clip": 0.2,
     "loss": "my_loss",
     "metrics": ["my_metric"],
     "trainer": {
@@ -29,10 +30,10 @@
     "arch": "RNNLM",
     "model": {
         "rnn_type": "LSTM",
-        "ninput": 300,
-        "nhidden": 128,
+        "ninput": 200,
+        "nhidden": 200,
         "nlayers": 2,
-        "dropout": 0.5,
+        "dropout": 0.2,
         "tie_weights": false
     }
 }
