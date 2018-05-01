@@ -50,7 +50,9 @@ class Trainer(BaseTrainer):
             data, target = self._to_variable(data, target)
             #print('data.size(): ' + str(data.size()))
             #print('target.size(): ' + str(target.size()))
+            #print('hidden.size():' + str(hidden[0].size()))
             hidden = self._repackage_hidden(hidden)
+            #print('hidden_repacked.size(): ' + str(hidden[0].size()))
             self.optimizer.zero_grad()
             output, hidden = self.model(data, hidden)
             #print('output.size(): ' + str(output.size()))
@@ -74,7 +76,8 @@ class Trainer(BaseTrainer):
 
         log = {
             'loss': total_loss / len(self.data_loader),
-            'metrics': (total_metrics / len(self.data_loader)).tolist()
+            #'metrics': (total_metrics / len(self.data_loader)).tolist()
+            'metrics': total_loss / len(self.data_loader)
         }
 
         if self.valid:
@@ -87,18 +90,19 @@ class Trainer(BaseTrainer):
         self.model.eval()
         total_val_loss = 0
         total_val_metrics = np.zeros(len(self.metrics))
-        for batch_idx, (data, target) in enumerate(self.valid_data_loader):
-            data, target = self._to_variable(data, target)
-
-            output = self.model(data)
-            loss = self.loss(output, target)
-
-            total_val_loss += loss.data[0]
-            #total_val_metrics += self._eval_metrics(output, target)
+        hidden = self.model.init_hidden(self.batch_size)
+        with torch.no_grad():
+            for batch_idx, (data, target) in enumerate(self.valid_data_loader):
+                data, target = self._to_variable(data, target)
+                output, hidden = self.model(data, hidden)
+                loss = self.loss(output.view(-1, self.ntoken), target.t().contiguous().view(-1))
+                total_val_loss += loss.data[0]
+                #total_val_metrics += self._eval_metrics(output, target)
 
         return {
             'val_loss': total_val_loss / len(self.valid_data_loader),
-            'val_metrics': math.exp(total_val_loss / len(self.valid_data_loader))
+            #'val_metrics': math.exp(total_val_loss / len(self.valid_data_loader))
+            'val_metrics': total_val_loss / len(self.valid_data_loader)
         }
 
 
