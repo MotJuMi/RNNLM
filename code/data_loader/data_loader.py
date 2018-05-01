@@ -23,15 +23,24 @@ class Vocabulary(object):
         return len(self.i2w)
 
 class Dataset(data.Dataset):
-    def __init__(self, path, vocab=None, seq_len=20):
+    def __init__(self, path, vocab=None, seq_len=20, batch_size=32):
         self.vocab = Vocabulary() if vocab is None else vocab
         self.data = self._get_data(path)
         if vocab is None:
             self.vocab.build_vocab()
+        self.batch_size = batch_size
+        self.nbatch = len(self.data) // (batch_size * seq_len)
         self.seq_len = seq_len
-        self.src_seqs = list(self._get_src_seqs())
-        self.tgt_seqs = list(self._get_tgt_seqs())
+        #self.data = self.data[:self.nbatch * self.batch_size * self.seq_len + 1]
+        self.src_seqs = list(self._get_src_seqs())[:self.nbatch * self.batch_size]
+        self.tgt_seqs = list(self._get_tgt_seqs())[:self.nbatch * self.batch_size]
+        #print('batch_size: ' + str(self.batch_size))
+        #print('nbatch: ' + str(self.nbatch))
+        #print('seq_len: ' + str(self.seq_len))
+        #print('nsrc: ' + str(len(self.src_seqs)))
+        #print('ntgt: ' + str(len(self.tgt_seqs)))
         self.num_total_seqs = len(self.src_seqs)
+
 
     def _get_data(self, path):
         ids = torch.LongTensor()
@@ -89,7 +98,7 @@ def collate_fn(data):
 
 def get_loader(config, mode='train', vocab=None, shuffle=False, seq_len=20, batch_size=32):
     path = config['data_loader']['data_dir'] + '/' + mode + '.txt'
-    dataset = Dataset(path, vocab, seq_len)
+    dataset = Dataset(path, vocab, seq_len, batch_size)
     data_loader = torch.utils.data.DataLoader(dataset=dataset,
                                               batch_size=batch_size,
                                               shuffle=shuffle,
