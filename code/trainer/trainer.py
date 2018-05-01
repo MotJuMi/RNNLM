@@ -59,7 +59,7 @@ class Trainer(BaseTrainer):
             #print('target.size(): ' + str(target.size()))
             loss = self.loss(output.view(-1, self.ntoken), target.t().contiguous().view(-1))
             loss.backward()
-            torch.nn.utils.clip_grad_norm(self.model.parameters(), 0.25)
+            torch.nn.utils.clip_grad_norm(self.model.parameters(), self.config["clip"])
             self.optimizer.step()
 
             total_loss += loss.data[0]
