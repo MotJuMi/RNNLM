@@ -19,7 +19,7 @@
     "loss": "my_loss",
     "metrics": ["my_metric"],
     "trainer": {
-        "epochs": 1,
+        "epochs": 5,
         "save_dir": "saved/",
         "save_freq": 1,
         "verbosity": 2,
