@@ -19,7 +19,9 @@ def main(config, resume):
                                             seq_len=config['data_loader']['seq_len'],
                                             batch_size=config['data_loader']['batch_size'])
     train_vocab = train_dataset.get_vocab()
-    valid_data_loader = get_loader(config, mode='valid', vocab=train_vocab)
+    _, valid_data_loader = get_loader(config, mode='valid', vocab=train_vocab,
+                                   seq_len=config['data_loader']['seq_len'],
+                                   batch_size=config['data_loader']['batch_size'])
     config['model']['ntoken'] = len(train_vocab)
     print(config)
     model = eval(config['arch'])(config['model'])
