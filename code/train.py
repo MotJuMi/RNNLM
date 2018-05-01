@@ -17,7 +17,8 @@ def main(config, resume):
 
     train_dataset, data_loader = get_loader(config, mode='train', vocab=None,
                                             seq_len=config['data_loader']['seq_len'],
-                                            batch_size=config['data_loader']['batch_size'])
+                                            batch_size=config['data_loader']['batch_size'],
+                                            min_word_count=config['data_loader']['min_word_count'])
     train_vocab = train_dataset.get_vocab()
     _, valid_data_loader = get_loader(config, mode='valid', vocab=train_vocab,
                                    seq_len=config['data_loader']['seq_len'],
